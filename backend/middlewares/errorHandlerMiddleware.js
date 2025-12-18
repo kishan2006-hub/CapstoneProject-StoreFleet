@@ -1,0 +1,24 @@
+import { ErrorHandler } from "../utils/errorHandler.js";
+
+export const errorHandlerMiddleware = (err, req, res, next) => {
+  err.message = err.message || "Internal server error";
+  err.statusCode = err.statusCode || 500;
+
+  if (err instanceof ErrorHandler) {
+    return res
+      .status(err.statusCode)
+      .json({ success: false, error: err.message });
+  }
+
+  return res
+    .status(err.statusCode)
+    .json({ success: false, error: err.message });
+};
+
+// handling handleUncaughtError Rejection
+export const handleUncaughtError = () => {
+  process.on("uncaughtException", (err) => {
+    console.log(`Error: ${err}`);
+    console.log("Shutting down server because of uncaughtException");
+  });
+};
